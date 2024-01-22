@@ -14,4 +14,11 @@ public class OrderApplication {
         SpringApplication.run(OrderApplication.class, args);
     }
 
+    /**
+     * 创建RestTemplate并注入Spring容器
+     */
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }
