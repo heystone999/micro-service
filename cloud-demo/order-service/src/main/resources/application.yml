@@ -13,6 +13,8 @@ spring:
       server-addr: localhost:8848
       discovery:
         cluster-name: HZ
+        namespace: fab3e84b-6137-4655-9aef-b79cf4b6d773
+        ephemeral: false
 mybatis:
   type-aliases-package: com.stone.user.pojo
   configuration:
