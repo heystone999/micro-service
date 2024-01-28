@@ -8,5 +8,3 @@ spring:
       server-addr: localhost:8848
       config:
         file-extension: yaml
-#pattern:
-#  dateformat: yyyy年MM月dd日 HH:mm:ss
