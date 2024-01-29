@@ -1,4 +1,4 @@
-package com.stone.order.pojo;
+package com.stone.feign.pojo;
 
 import lombok.Data;
 

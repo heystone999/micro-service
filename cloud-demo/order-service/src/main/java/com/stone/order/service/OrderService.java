@@ -1,12 +1,11 @@
 package com.stone.order.service;
 
-import com.stone.order.clients.UserClient;
+import com.stone.feign.clients.UserClient;
+import com.stone.feign.pojo.User;
 import com.stone.order.mapper.OrderMapper;
 import com.stone.order.pojo.Order;
-import com.stone.order.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class OrderService {

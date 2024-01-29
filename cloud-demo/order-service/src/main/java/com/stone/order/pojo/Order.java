@@ -1,5 +1,6 @@
 package com.stone.order.pojo;
 
+import com.stone.feign.pojo.User;
 import lombok.Data;
 
 @Data

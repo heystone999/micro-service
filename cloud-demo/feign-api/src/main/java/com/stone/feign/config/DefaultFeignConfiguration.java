@@ -1,4 +1,4 @@
-package com.stone.order.config;
+package com.stone.feign.config;
 
 import feign.Logger;
 import org.springframework.context.annotation.Bean;
