@@ -2,6 +2,7 @@ package com.stone.order;
 
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.RandomRule;
+import com.stone.order.config.DefaultFeignConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 @MapperScan("com.stone.order.mapper")
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients(defaultConfiguration = DefaultFeignConfiguration.class)
 public class OrderApplication {
 
     public static void main(String[] args) {
