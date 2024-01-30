@@ -46,7 +46,8 @@ public class UserController {
      * @return 用户
      */
     @GetMapping("/{id}")
-    public User queryById(@PathVariable("id") Long id) {
+    public User queryById(@PathVariable("id") Long id, @RequestHeader(value = "Slogan", required = false) String slogan) {
+        System.out.println("slogan: " + slogan);
         return userService.queryById(id);
     }
 }
