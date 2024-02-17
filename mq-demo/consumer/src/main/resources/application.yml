@@ -8,3 +8,6 @@ spring:
     username: stone
     password: 1234
     virtual-host: /
+    listener:
+      simple:
+        prefetch: 1
