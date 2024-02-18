@@ -38,4 +38,9 @@ public class FanoutConfig {
     public Binding fanoutBinding2(Queue fanoutQueue2, FanoutExchange fanoutExchange) {
         return BindingBuilder.bind(fanoutQueue2).to(fanoutExchange);
     }
+
+    @Bean
+    public Queue objectQueue() {
+        return new Queue("object.queue");
+    }
 }
