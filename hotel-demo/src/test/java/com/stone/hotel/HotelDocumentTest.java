@@ -5,6 +5,7 @@ import com.stone.hotel.pojo.Hotel;
 import com.stone.hotel.pojo.HotelDoc;
 import com.stone.hotel.service.IHotelService;
 import org.apache.http.HttpHost;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.List;
 
 @SpringBootTest
 public class HotelDocumentTest {
@@ -70,6 +72,20 @@ public class HotelDocumentTest {
         DeleteRequest request = new DeleteRequest("hotel", "61083");
         // 发送请求
         client.delete(request, RequestOptions.DEFAULT);
+    }
+
+    @Test
+    void testBulkRequest() throws IOException {
+        List<Hotel> hotels = hotelService.list();
+        // 创建Request
+        BulkRequest request = new BulkRequest();
+        for (Hotel hotel : hotels) {
+            HotelDoc hotelDoc = new HotelDoc(hotel);
+            // 创建Request对象
+            request.add(new IndexRequest("hotel").id(hotelDoc.getId().toString()).source(JSON.toJSONString(hotelDoc), XContentType.JSON));
+        }
+        // 发送请求
+        client.bulk(request, RequestOptions.DEFAULT);
     }
 
     @BeforeEach
