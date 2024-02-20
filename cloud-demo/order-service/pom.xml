@@ -42,7 +42,7 @@
             <artifactId>feign-httpclient</artifactId>
         </dependency>
         <dependency>
-            <groupId>come.stone</groupId>
+            <groupId>com.stone</groupId>
             <artifactId>feign-api</artifactId>
             <version>1.0</version>
         </dependency>

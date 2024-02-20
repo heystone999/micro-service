@@ -9,7 +9,7 @@
         <version>1.0</version>
     </parent>
 
-    <groupId>come.stone</groupId>
+    <groupId>com.stone</groupId>
     <artifactId>eureka-server</artifactId>
 
     <properties>
