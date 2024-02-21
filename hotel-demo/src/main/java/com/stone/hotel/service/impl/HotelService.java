@@ -12,10 +12,14 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.geo.GeoPoint;
+import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +38,16 @@ public class HotelService extends ServiceImpl<HotelMapper, Hotel> implements IHo
             SearchRequest request = new SearchRequest("hotel");
 
             buildBasicQuery(params, request);
-
+            // page
             int page = params.getPage();
             int size = params.getSize();
             request.source().from((page - 1) * size).size(size);
+            // sort
+            String location = params.getLocation();
+            // location="31.24609, 121.620365";
+            if (location != null && !location.equals("")) {
+                request.source().sort(SortBuilders.geoDistanceSort("location", new GeoPoint(location)).order(SortOrder.ASC).unit(DistanceUnit.KILOMETERS));
+            }
 
             SearchResponse response = client.search(request, RequestOptions.DEFAULT);
             return handleResponse(response);
@@ -83,6 +93,12 @@ public class HotelService extends ServiceImpl<HotelMapper, Hotel> implements IHo
         for (SearchHit hit : hits) {
             String json = hit.getSourceAsString();
             HotelDoc hotelDoc = JSON.parseObject(json, HotelDoc.class);
+
+            Object[] sortValues = hit.getSortValues();
+            if (sortValues.length > 0) {
+                Object sortValue = sortValues[0];
+                hotelDoc.setDistance(sortValue);
+            }
             hotels.add(hotelDoc);
         }
         return new PageResult(total, hotels);
