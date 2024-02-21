@@ -12,13 +12,17 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.util.Map;
 
 @SpringBootTest
 public class HotelSearchTest {
@@ -57,6 +61,15 @@ public class HotelSearchTest {
         for (SearchHit hit : hits) {
             String json = hit.getSourceAsString();
             HotelDoc hotelDoc = JSON.parseObject(json, HotelDoc.class);
+            // highlight
+            Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+            if (!CollectionUtils.isEmpty(highlightFields)) {
+                HighlightField highlightField = highlightFields.get("name");
+                if (highlightField != null) {
+                    String name = highlightField.getFragments()[0].string();
+                    hotelDoc.setName(name);
+                }
+            }
             System.out.println("hotelDoc = " + hotelDoc);
         }
     }
@@ -87,6 +100,20 @@ public class HotelSearchTest {
         request.source().sort("price", SortOrder.ASC);
         // page from+size
         request.source().from((page - 1) * size).size(5);
+        // 发送请求
+        SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+        // 解析响应
+        handleResponse(response);
+    }
+
+    @Test
+    void testHighlight() throws IOException {
+        // 准备Request
+        SearchRequest request = new SearchRequest("hotel");
+        // 准备DSL - Query
+        request.source().query(QueryBuilders.matchQuery("all", "如家"));
+        // highlight
+        request.source().highlighter(new HighlightBuilder().field("name").requireFieldMatch(false));
         // 发送请求
         SearchResponse response = client.search(request, RequestOptions.DEFAULT);
         // 解析响应
