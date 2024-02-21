@@ -12,6 +12,7 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -32,12 +33,7 @@ public class HotelService extends ServiceImpl<HotelMapper, Hotel> implements IHo
         try {
             SearchRequest request = new SearchRequest("hotel");
 
-            String key = params.getKey();
-            if (key == null || "".equals(key)) {
-                request.source().query(QueryBuilders.matchAllQuery());
-            } else {
-                request.source().query(QueryBuilders.matchQuery("all", key));
-            }
+            buildBasicQuery(params, request);
 
             int page = params.getPage();
             int size = params.getSize();
@@ -48,6 +44,35 @@ public class HotelService extends ServiceImpl<HotelMapper, Hotel> implements IHo
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void buildBasicQuery(RequestParams params, SearchRequest request) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        // must
+        String key = params.getKey();
+        if (key == null || "".equals(key)) {
+            boolQuery.must(QueryBuilders.matchAllQuery());
+        } else {
+            boolQuery.must(QueryBuilders.matchQuery("all", key));
+        }
+        // city
+        if (params.getCity() != null && !params.getCity().equals("")) {
+            boolQuery.filter(QueryBuilders.termQuery("city", params.getCity()));
+        }
+        // brand
+        if (params.getBrand() != null && !params.getBrand().equals("")) {
+            boolQuery.filter(QueryBuilders.termQuery("brand", params.getBrand()));
+        }
+        // starName
+        if (params.getStarName() != null && !params.getStarName().equals("")) {
+            boolQuery.filter(QueryBuilders.termQuery("starName", params.getStarName()));
+        }
+        // price
+        if (params.getMinPrice() != null && params.getMaxPrice() != null) {
+            boolQuery.filter(QueryBuilders.rangeQuery("price").gte(params.getMinPrice()).lte(params.getMaxPrice()));
+        }
+
+        request.source().query(boolQuery);
     }
 
     private PageResult handleResponse(SearchResponse response) {
