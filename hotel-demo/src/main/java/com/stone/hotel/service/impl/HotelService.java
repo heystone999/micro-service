@@ -126,9 +126,11 @@ public class HotelService extends ServiceImpl<HotelMapper, Hotel> implements IHo
 
 
     @Override
-    public Map<String, List<String>> filters() {
+    public Map<String, List<String>> filters(RequestParams params) {
         try {
             SearchRequest request = new SearchRequest("hotel");
+            // Query
+            buildBasicQuery(params, request);
 
             request.source().size(0);
             buildAggregation(request);
@@ -138,11 +140,11 @@ public class HotelService extends ServiceImpl<HotelMapper, Hotel> implements IHo
             Map<String, List<String>> result = new HashMap<>();
             Aggregations aggregations = response.getAggregations();
             List<String> brandList = getAggByName(aggregations, "brandAgg");
-            result.put("品牌", brandList);
+            result.put("brand", brandList);
             List<String> cityList = getAggByName(aggregations, "cityAgg");
-            result.put("城市", cityList);
+            result.put("city", cityList);
             List<String> starList = getAggByName(aggregations, "starAgg");
-            result.put("星级", starList);
+            result.put("starName", starList);
             return result;
         } catch (IOException e) {
             throw new RuntimeException(e);
