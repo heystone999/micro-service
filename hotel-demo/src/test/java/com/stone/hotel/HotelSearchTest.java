@@ -18,6 +18,10 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.search.suggest.Suggest;
+import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilders;
+import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -139,6 +143,21 @@ public class HotelSearchTest {
         for (Terms.Bucket bucket : buckets) {
             String key = bucket.getKeyAsString();
             System.out.println(key);
+        }
+    }
+
+    @Test
+    void testSuggest() throws IOException {
+        SearchRequest request = new SearchRequest("hotel");
+        request.source().suggest(new SuggestBuilder().addSuggestion("suggestions", SuggestBuilders.completionSuggestion("suggestion").prefix("sh").skipDuplicates(true).size(10)));
+        SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+
+        Suggest suggest = response.getSuggest();
+        CompletionSuggestion suggestions = suggest.getSuggestion("suggestions");
+        List<CompletionSuggestion.Entry.Option> options = suggestions.getOptions();
+        for (CompletionSuggestion.Entry.Option option : options) {
+            String text = option.getText().toString();
+            System.out.println(text);
         }
     }
 
