@@ -25,6 +25,10 @@ import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.search.suggest.Suggest;
+import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilders;
+import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -151,6 +155,7 @@ public class HotelService extends ServiceImpl<HotelMapper, Hotel> implements IHo
         }
     }
 
+
     private static List<String> getAggByName(Aggregations aggregations, String aggName) {
         Terms brandTerms = aggregations.get(aggName);
         List<? extends Terms.Bucket> buckets = brandTerms.getBuckets();
@@ -167,4 +172,26 @@ public class HotelService extends ServiceImpl<HotelMapper, Hotel> implements IHo
         request.source().aggregation(AggregationBuilders.terms("cityAgg").field("city").size(100));
         request.source().aggregation(AggregationBuilders.terms("starAgg").field("starName").size(100));
     }
+
+    @Override
+    public List<String> getSuggestions(String prefix) {
+        try {
+            SearchRequest request = new SearchRequest("hotel");
+            request.source().suggest(new SuggestBuilder().addSuggestion("suggestions", SuggestBuilders.completionSuggestion("suggestion").prefix(prefix).skipDuplicates(true).size(10)));
+            SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+
+            Suggest suggest = response.getSuggest();
+            CompletionSuggestion suggestions = suggest.getSuggestion("suggestions");
+            List<CompletionSuggestion.Entry.Option> options = suggestions.getOptions();
+            List<String> list = new ArrayList<>(options.size());
+            for (CompletionSuggestion.Entry.Option option : options) {
+                String text = option.getText().toString();
+                list.add(text);
+            }
+            return list;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -4,10 +4,7 @@ import com.stone.hotel.pojo.PageResult;
 import com.stone.hotel.pojo.RequestParams;
 import com.stone.hotel.service.IHotelService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -28,4 +25,8 @@ public class HotelController {
         return hotelService.filters(params);
     }
 
+    @GetMapping("suggestion")
+    public List<String> getSuggestions(@RequestParam("key") String prefix) {
+        return hotelService.getSuggestions(prefix);
+    }
 }
