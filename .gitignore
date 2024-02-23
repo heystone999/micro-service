@@ -5,3 +5,6 @@
 *Test.java
 **/test/
 .DS_Store
+
+**/static/
+**/templates/
