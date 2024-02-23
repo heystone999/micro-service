@@ -8,6 +8,8 @@ import com.stone.hotel.pojo.PageResult;
 import com.stone.hotel.pojo.RequestParams;
 import com.stone.hotel.service.IHotelService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -29,6 +31,7 @@ import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilders;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
+import org.elasticsearch.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -189,6 +192,31 @@ public class HotelService extends ServiceImpl<HotelMapper, Hotel> implements IHo
                 list.add(text);
             }
             return list;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void insertById(Long id) {
+        try {
+            Hotel hotel = getById(id);
+            HotelDoc hotelDoc = new HotelDoc(hotel);
+
+            IndexRequest request = new IndexRequest("hotel").id(hotel.getId().toString());
+            request.source(JSON.toJSONString(hotelDoc), XContentType.JSON);
+
+            client.index(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        try {
+            DeleteRequest request = new DeleteRequest("hotel", id.toString());
+            client.delete(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
