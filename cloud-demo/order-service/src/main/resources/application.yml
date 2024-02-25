@@ -11,10 +11,13 @@ spring:
   cloud:
     nacos:
       server-addr: localhost:8848
-      discovery:
-        cluster-name: HZ
+#      discovery:
+#        cluster-name: HZ
 #        namespace: fab3e84b-6137-4655-9aef-b79cf4b6d773
-        ephemeral: false
+#        ephemeral: false
+    sentinel:
+      transport:
+        dashboard: localhost:8090
 mybatis:
   type-aliases-package: com.stone.user.pojo
   configuration:
@@ -35,7 +38,7 @@ ribbon:
   eager-load:
     enabled: true
     clients:
-     - userservice
+      - userservice
 feign:
   httpclient:
     enabled: true
