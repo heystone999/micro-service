@@ -18,6 +18,7 @@ spring:
     sentinel:
       transport:
         dashboard: localhost:8090
+      web-context-unify: false # 关闭context整合
 mybatis:
   type-aliases-package: com.stone.user.pojo
   configuration:

@@ -1,5 +1,6 @@
 package com.stone.order.service;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.stone.feign.clients.UserClient;
 import com.stone.feign.pojo.User;
 import com.stone.order.mapper.OrderMapper;
@@ -42,4 +43,9 @@ public class OrderService {
         // 4.返回
         return order;
     }*/
+
+    @SentinelResource("goods")
+    public void queryGoods() {
+        System.err.println("查询商品");
+    }
 }
