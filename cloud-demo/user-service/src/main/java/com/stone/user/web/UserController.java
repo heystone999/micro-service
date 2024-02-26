@@ -50,6 +50,8 @@ public class UserController {
         if (id == 1) {
             // 休眠 触发熔断
             Thread.sleep(60);
+        } else if (id == 2) {
+            throw new RuntimeException("故意抛异常 触发异常比例熔断");
         }
         return userService.queryById(id);
     }
