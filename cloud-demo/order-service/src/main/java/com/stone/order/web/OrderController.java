@@ -1,5 +1,6 @@
 package com.stone.order.web;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.stone.order.pojo.Order;
 import com.stone.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @SentinelResource("hot")
     @GetMapping("{orderId}")
     public Order queryOrderByUserId(@PathVariable("orderId") Long orderId) {
         // 根据id查询订单并返回
