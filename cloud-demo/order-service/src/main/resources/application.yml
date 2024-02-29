@@ -19,6 +19,13 @@ spring:
       transport:
         dashboard: localhost:8090
       web-context-unify: false # 关闭context整合
+      datasource:
+        flow:
+          nacos:
+            server-addr: localhost:8848
+            data-id: orderservice-flow-rules
+            group-id: SENTINEL_GROUP
+            rule-type: flow
 mybatis:
   type-aliases-package: com.stone.user.pojo
   configuration:
