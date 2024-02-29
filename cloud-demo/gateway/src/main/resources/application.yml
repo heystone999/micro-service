@@ -20,3 +20,4 @@ spring:
             - Path=/order/**
       default-filters:
         - AddRequestHeader=Slogan, Stone is freaking awesome!
+        - AddRequestHeader=origin, gateway
