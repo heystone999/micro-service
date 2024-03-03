@@ -6,10 +6,10 @@ import com.stone.order.entity.Order;
 import com.stone.order.mapper.OrderMapper;
 import com.stone.order.service.OrderService;
 import feign.FeignException;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Slf4j
 @Service
@@ -26,7 +26,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
+    @GlobalTransactional
     public Long create(Order order) {
         // 创建订单
         orderMapper.insert(order);
